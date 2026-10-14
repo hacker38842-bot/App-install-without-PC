@@ -1,0 +1,189 @@
+{
+  "project": "ARENA X Esports Tournament Platform",
+  "version": "1.0.0",
+  "database": {
+    "edition": "Enterprise",
+    "collections": {
+      "users": {
+        "description": "Private user account record",
+        "path": "users/{userId}",
+        "access": "Owner read/write approved fields, Admin full read",
+        "fields": {
+          "id": "String (UID)",
+          "email": "String",
+          "displayName": "String",
+          "inGameName": "String",
+          "freeFireUid": "String",
+          "referralCode": "String",
+          "referredByCode": "String | null",
+          "createdAt": "Timestamp",
+          "updatedAt": "Timestamp",
+          "isSuspended": "Boolean",
+          "roles": "Array<String> [player, admin]"
+        }
+      },
+      "publicProfiles": {
+        "description": "Public player profile visible on leaderboards and tournament lobbies",
+        "path": "publicProfiles/{userId}",
+        "access": "Public read, Owner update approved fields",
+        "fields": {
+          "userId": "String",
+          "displayName": "String",
+          "inGameName": "String",
+          "avatarUrl": "String",
+          "matchesPlayed": "Integer",
+          "matchesWon": "Integer",
+          "totalKills": "Integer",
+          "points": "Integer"
+        }
+      },
+      "tournaments": {
+        "description": "Esports tournament definitions and lifecycle state",
+        "path": "tournaments/{tournamentId}",
+        "access": "Public read, Admin create/update",
+        "fields": {
+          "id": "String",
+          "title": "String",
+          "gameTitle": "String (Free Fire MAX, etc.)",
+          "format": "String (Solo, Duo, Squad)",
+          "map": "String (Bermuda, Purgatory, etc.)",
+          "mode": "String (Battle Royale, Clash Squad)",
+          "status": "String (REGISTRATION_OPEN, FULL, CHECK_IN, ROOM_RELEASED, LIVE, COMPLETED, CANCELLED)",
+          "entryFeePaise": "Integer (exact integer paise)",
+          "prizePoolPaise": "Integer",
+          "firstPrizePaise": "Integer",
+          "secondPrizePaise": "Integer",
+          "thirdPrizePaise": "Integer",
+          "perKillPaise": "Integer",
+          "totalSlots": "Integer",
+          "filledSlots": "Integer",
+          "startTime": "Timestamp",
+          "checkInWindowMinutes": "Integer",
+          "roomId": "String | null (Restricted release)",
+          "roomPassword": "String | null (Restricted release)",
+          "rules": "String"
+        }
+      },
+      "tournamentRegistrations": {
+        "description": "Player slot registrations in tournaments",
+        "path": "tournaments/{tournamentId}/registrations/{userId}",
+        "access": "Owner read/create, Admin full access",
+        "fields": {
+          "tournamentId": "String",
+          "userId": "String",
+          "inGameName": "String",
+          "freeFireUid": "String",
+          "slotNumber": "Integer",
+          "registeredAt": "Timestamp",
+          "checkedIn": "Boolean",
+          "kills": "Integer",
+          "placement": "Integer",
+          "points": "Integer",
+          "prizeWonPaise": "Integer",
+          "resultVerified": "Boolean"
+        }
+      },
+      "walletAccounts": {
+        "description": "User wallet ledger balances (Server-only write)",
+        "path": "walletAccounts/{userId}",
+        "access": "Owner read-only, Cloud Functions write-only",
+        "fields": {
+          "userId": "String",
+          "balancePaise": "Integer (exact paise)",
+          "pendingWithdrawalPaise": "Integer",
+          "totalDepositedPaise": "Integer",
+          "totalWithdrawnPaise": "Integer",
+          "totalWonPaise": "Integer",
+          "bonusPoints": "Integer",
+          "updatedAt": "Timestamp"
+        }
+      },
+      "walletLedger": {
+        "description": "Immutable double-entry financial transaction ledger",
+        "path": "walletLedger/{transactionId}",
+        "access": "Owner read matching userId, Cloud Functions write-only",
+        "fields": {
+          "id": "String (tx_*)",
+          "userId": "String",
+          "amountPaise": "Integer (signed)",
+          "type": "String (DEPOSIT, WITHDRAWAL, ENTRY_FEE, PRIZE_PAYOUT, AD_REWARD, REFUND)",
+          "status": "String (SUCCESS, PENDING, REJECTED, REFUNDED)",
+          "title": "String",
+          "description": "String",
+          "referenceId": "String | null",
+          "timestamp": "Timestamp"
+        }
+      },
+      "withdrawalRequests": {
+        "description": "Withdrawal requests queued for admin review and IMPS payout",
+        "path": "withdrawalRequests/{requestId}",
+        "access": "Owner create/read, Admin review/update",
+        "fields": {
+          "id": "String (wdr_*)",
+          "userId": "String",
+          "amountPaise": "Integer",
+          "upiId": "String",
+          "status": "String (PENDING_REVIEW, APPROVED_PAID, REJECTED)",
+          "createdAt": "Timestamp",
+          "processedAt": "Timestamp | null",
+          "adminNote": "String | null"
+        }
+      },
+      "rewardEvents": {
+        "description": "Rewarded ad completions verified via SSV callbacks",
+        "path": "rewardEvents/{eventId}",
+        "access": "Owner read, Server write",
+        "fields": {
+          "id": "String",
+          "userId": "String",
+          "rewardPaise": "Integer",
+          "timestamp": "Timestamp",
+          "cooldownUntil": "Timestamp",
+          "adUnitId": "String"
+        }
+      },
+      "referrals": {
+        "description": "Referral attribution tracking and qualification",
+        "path": "referrals/{referralId}",
+        "access": "Referrer read, Server write",
+        "fields": {
+          "id": "String",
+          "referrerUserId": "String",
+          "referredUserId": "String",
+          "referredUserName": "String",
+          "status": "String (PENDING_MATCH, QUALIFIED_PAID)",
+          "bonusPaise": "Integer",
+          "createdAt": "Timestamp"
+        }
+      },
+      "leaderboardPrizeConfigs": {
+        "description": "Admin configurable prize rules for live leaderboards",
+        "path": "leaderboardPrizeConfigs/{configId}",
+        "access": "Public read, Admin write",
+        "fields": {
+          "id": "String (ACTIVE_PLAYERS_WEEKLY, etc.)",
+          "leaderboardType": "String",
+          "period": "String",
+          "rank1PrizePaise": "Integer",
+          "rank2PrizePaise": "Integer",
+          "rank3PrizePaise": "Integer",
+          "top10PrizePaise": "Integer",
+          "isFrozen": "Boolean",
+          "totalBudgetPaise": "Integer"
+        }
+      },
+      "announcements": {
+        "description": "Broadcast platform announcements and tournament alerts",
+        "path": "announcements/{announcementId}",
+        "access": "Public read, Admin write",
+        "fields": {
+          "id": "String",
+          "title": "String",
+          "message": "String",
+          "timestamp": "Timestamp",
+          "priority": "String (NORMAL, URGENT)"
+        }
+      }
+    }
+  }
+}

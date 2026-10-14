@@ -1,0 +1,6 @@
+{
+  "name": "ARENA X",
+  "description": "Premium Mobile-First Esports Tournament Platform for Free Fire MAX and competitive gaming",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

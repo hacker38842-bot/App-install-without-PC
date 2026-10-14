@@ -1,0 +1,96 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (request.auth.token.admin == true ||
+         request.auth.uid == 'usr_admin_1');
+    }
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User accounts
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['roles', 'isSuspended']);
+      allow delete: if isAdmin();
+    }
+
+    // Public Profiles
+    match /publicProfiles/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId) || isAdmin();
+    }
+
+    // Tournaments
+    match /tournaments/{tournamentId} {
+      allow read: if true;
+      allow write: if isAdmin();
+
+      // Registrations subcollection
+      match /registrations/{userId} {
+        allow read: if isAuthenticated();
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId) || isAdmin();
+        allow delete: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // Wallet Accounts - Strictly Server/Admin only writes!
+    match /walletAccounts/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if false; // Only Cloud Functions can mutate balances
+    }
+
+    // Wallet Ledger - Strictly Server-only writes
+    match /walletLedger/{txId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if false; // Immutable ledger
+    }
+
+    // Withdrawal Requests
+    match /withdrawalRequests/{reqId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Rewarded Ad Events
+    match /rewardEvents/{eventId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if false; // Verified SSV Server only
+    }
+
+    // Referrals
+    match /referrals/{refId} {
+      allow read: if isAuthenticated() && (resource.data.referrerUserId == request.auth.uid || isAdmin());
+      allow write: if false;
+    }
+
+    // Leaderboard Prize Configurations
+    match /leaderboardPrizeConfigs/{configId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Announcements
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,105 @@
+package com.example.util
+
+enum class AppLanguage(val code: String, val displayName: String) {
+    ENGLISH("en", "English"),
+    BENGALI("bn", "বাংলা")
+}
+
+object Localization {
+    fun getString(key: String, language: AppLanguage): String {
+        val map = if (language == AppLanguage.BENGALI) bengaliStrings else englishStrings
+        return map[key] ?: englishStrings[key] ?: key
+    }
+
+    private val englishStrings = mapOf(
+        "app_title" to "ARENA X",
+        "home" to "Home",
+        "tournaments" to "Tournaments",
+        "leaderboard" to "Leaderboard",
+        "wallet" to "Wallet",
+        "profile" to "Profile",
+        "featured" to "Featured Tournaments",
+        "upcoming" to "Upcoming Matches",
+        "live" to "Live Now",
+        "completed" to "Completed",
+        "watch_earn" to "Watch & Earn",
+        "entry_fee" to "Entry Fee",
+        "prize_pool" to "Prize Pool",
+        "per_kill" to "Per Kill",
+        "slots" to "Slots",
+        "register" to "Join Tournament",
+        "view_room" to "Room ID & Pass",
+        "room_locked" to "Room details release 15m before match",
+        "balance" to "Available Balance",
+        "deposit" to "Add Cash",
+        "withdraw" to "Withdraw",
+        "refer_earn" to "Refer & Earn",
+        "active_players" to "Most Active",
+        "top_referrers" to "Top Referrers",
+        "top_depositors" to "Top Depositors",
+        "admin_panel" to "Admin Dashboard",
+        "language" to "Language",
+        "terms" to "Terms & Rules",
+        "support" to "24/7 Support",
+        "free_entry" to "FREE",
+        "login" to "Log In",
+        "register_tab" to "Register",
+        "email" to "Email Address",
+        "password" to "Password",
+        "full_name" to "Full Name",
+        "confirm_password" to "Confirm Password",
+        "forgot_password" to "Forgot Password?",
+        "reset_password" to "Reset Password",
+        "remember_session" to "Remember authenticated session",
+        "accept_terms" to "I accept the competitive terms & rules",
+        "logout" to "Log Out",
+        "logging_in" to "Authenticating...",
+        "registering" to "Creating Account..."
+    )
+
+    private val bengaliStrings = mapOf(
+        "app_title" to "অ্যারেনা এক্স",
+        "home" to "হোম",
+        "tournaments" to "টুর্নামেন্ট",
+        "leaderboard" to "লিডারবোর্ড",
+        "wallet" to "ওয়ালেট",
+        "profile" to "প্রোফাইল",
+        "featured" to "সেরা টুর্নামেন্ট",
+        "upcoming" to "আসন্ন ম্যাচ",
+        "live" to "লাইভ চলছে",
+        "completed" to "সম্পন্ন",
+        "watch_earn" to "বিজ্ঞাপন দেখে আয়",
+        "entry_fee" to "এন্ট্রি ফি",
+        "prize_pool" to "পুরস্কার তহবিল",
+        "per_kill" to "প্রতি কিল",
+        "slots" to "স্লট",
+        "register" to "টুর্নামেন্টে যোগ দিন",
+        "view_room" to "রুম আইডি ও পাসওয়ার্ড",
+        "room_locked" to "ম্যাচের ১৫ মিনিট আগে রুম পাওয়া যাবে",
+        "balance" to "ব্যবহারযোগ্য ব্যালেন্স",
+        "deposit" to "টাকা যোগ করুন",
+        "withdraw" to "উত্তোলন",
+        "refer_earn" to "বন্ধুকে আমন্ত্রণ জানান",
+        "active_players" to "সেরা সক্রিয় খেলোয়াড়",
+        "top_referrers" to "শীর্ষ রেফারার",
+        "top_depositors" to "শীর্ষ জমাকারী",
+        "admin_panel" to "অ্যাডমিন ড্যাশবোর্ড",
+        "language" to "ভাষা",
+        "terms" to "শর্তাবলী ও নিয়ম",
+        "support" to "সাহায্য ও সাপোর্ট",
+        "free_entry" to "ফ্রি",
+        "login" to "লগ ইন",
+        "register_tab" to "নিবন্ধন",
+        "email" to "ইমেইল ঠিকানা",
+        "password" to "পাসওয়ার্ড",
+        "full_name" to "পুরো নাম",
+        "confirm_password" to "পাসওয়ার্ড নিশ্চিত করুন",
+        "forgot_password" to "পাসওয়ার্ড ভুলে গেছেন?",
+        "reset_password" to "পাসওয়ার্ড রিসেট",
+        "remember_session" to "সেশন মনে রাখুন",
+        "accept_terms" to "আমি প্রতিযোগিতামূলক নিয়ম ও শর্তাবলী মানি",
+        "logout" to "লগ আউট",
+        "logging_in" to "যাচাই করা হচ্ছে...",
+        "registering" to "অ্যাকাউন্ট তৈরি হচ্ছে..."
+    )
+}
